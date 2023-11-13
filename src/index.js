@@ -2,7 +2,7 @@ import Notiflix from 'notiflix';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
 import { createMarkup } from './js/markup';
-import { getImage } from './js/API';
+import { getImage } from './js/img_api';
 
 const lightbox = new SimpleLightbox('.photo-card a', {
     captionsData: 'alt',
