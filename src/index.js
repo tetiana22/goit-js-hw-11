@@ -1,8 +1,8 @@
 import Notiflix from 'notiflix';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
-import { createMarkup } from './markup';
-import { getImage } from './sass/helper';
+import { createMarkup } from './js/markup';
+import { getImage } from './js/API';
 
 const lightbox = new SimpleLightbox('.photo-card a', {
     captionsData: 'alt',
@@ -15,7 +15,7 @@ const searchForm = document.querySelector('.search-form');
 const loadBtn = document.querySelector('.load-more');
 const gallery = document.querySelector('.gallery');
 
-const perPage =  150
+const perPage =  40;
 let page = 1;
 let q = ''
 
@@ -33,7 +33,7 @@ async function handlerForm(e) {
             Notiflix.Notify.info('Enter your request, please!');
             return;
         }
-    console.log(inputValue)
+    
     const data = await getImage(inputValue)
         
         gallery.innerHTML = createMarkup(data.hits);
@@ -44,9 +44,11 @@ async function handlerForm(e) {
             } else if (data.totalHits === 0) {
                 Notiflix.Notify.failure('Sorry, there are no images matching your search query. Please try again.');
                 loadBtn.hidden = true;
+            } else if (data.totalHits < perPage) {
+                loadBtn.hidden = true;
             } }
       catch(err) {
-        console.log(err)
+        Notiflix.Notify.failure('Oops!!! Something went wrong');
       } };
   
 loadBtn.addEventListener('click', onLoadImgs)
@@ -54,7 +56,7 @@ loadBtn.addEventListener('click', onLoadImgs)
 async function onLoadImgs() {
     try {
    page += 1;
-   const inputValue = searchForm.elements.searchQuery.value;
+   const inputValue = searchForm.elements.searchQuery.value.trim();
    const data =  await getImage(inputValue)
     
         const numberOfPage = Math.ceil(data.totalHits / perPage);
@@ -66,6 +68,6 @@ async function onLoadImgs() {
             loadBtn.removeEventListener('click', onLoadImgs);
         } }
     catch(err) {
-     console.log(err);
+        Notiflix.Notify.failure('Oops!!! Something went wrong');
     }};
 
